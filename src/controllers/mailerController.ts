@@ -6,7 +6,7 @@ const mailerController = async (
   req: express.Request,
   res: express.Response
 ) => {
-  const { email, username, name, type, registerURL } = req.body
+  const { email, username, name, type, url } = req.body
 
   const nodejsMailerEnvs = {
     host: process.env.TITAN_MAILER_HOST,
@@ -14,20 +14,23 @@ const mailerController = async (
     pass: process.env.NODEJS_MAILER_PASSWORD,
   }
 
-  const passwordResetData = passwordReset(email, registerURL)
+  const passwordResetData = passwordReset(email, url)
 
   const adminMailData = adminMail(name, email, username)
 
-  const userMailData = userMail(name, email, username, registerURL)
+  const userMailData = userMail(name, email, username, url)
 
-  if (type === 'reg-link-nodemailer') {
-    await transporter(nodejsMailerEnvs).sendMail(userMailData)
-    await transporter(nodejsMailerEnvs).sendMail(adminMailData)
-  } else if (type === 'reset-password-nodemailer') {
-    await transporter(nodejsMailerEnvs).sendMail(passwordResetData)
+  try {
+    if (type === 'reg-link-nodemailer') {
+      await transporter(nodejsMailerEnvs).sendMail(userMailData)
+      await transporter(nodejsMailerEnvs).sendMail(adminMailData)
+    } else if (type === 'reset-password-nodemailer') {
+      await transporter(nodejsMailerEnvs).sendMail(passwordResetData)
+    }
+    res.json('Success')
+  } catch (error: any) {
+    res.json(error)
   }
-
-  res.json('OKOKOKOK')
 }
 
 export { mailerController }
