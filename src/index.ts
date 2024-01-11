@@ -7,6 +7,7 @@ import compression from 'compression'
 import cors from 'cors'
 import mongoose from 'mongoose'
 import router from './router'
+import mailerRoutes from './routes/mailerRoutes'
 
 import dotenv from 'dotenv'
 import path from 'path'
@@ -19,6 +20,7 @@ app.use(
   cors({
     credentials: true,
     origin: [
+      'https://localhost:3000',
       'http://localhost:5173',
       'https://localhost:5173',
       'https://cba.pictusweb.sk',
@@ -52,12 +54,13 @@ mongoose.connect(process.env.MONGO_URL)
 mongoose.connection.on('error', (error: Error) => console.log(error))
 
 app.use('/', router())
+app.use('/email', mailerRoutes)
 
 // app.use(express.json())
 // app.use('/uploads', express.static(path.resolve('uploads')))
 
 // app.use('/api/md')
 
-// app.get('/', (req: Request, res: Response) => {
-//   res.send('My super Express + TypeScript Server')
-// })
+app.get('/', (req: express.Request, res: express.Response) => {
+  res.sendFile(__dirname + '/public/server.png')
+})
