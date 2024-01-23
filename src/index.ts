@@ -8,6 +8,7 @@ import cors from 'cors'
 import mongoose from 'mongoose'
 import router from './router'
 import mailerRoutes from './routes/mailerRoutes'
+import technikRoutes from './routes/technikRoutes'
 
 import dotenv from 'dotenv'
 import path from 'path'
@@ -20,6 +21,7 @@ app.use(
   cors({
     credentials: true,
     origin: [
+      'http://localhost:3000',
       'https://localhost:3000',
       'http://localhost:5173',
       'https://localhost:5173',
@@ -43,7 +45,7 @@ app.use(bodyPaser.json())
 
 const server = http.createServer(app)
 
-const PORT = process.env.PORT || 3010
+const PORT = process.env.PORT
 
 server.listen(PORT, () => {
   console.log(`Server is really running on http://localhost:${PORT}/`)
@@ -55,7 +57,7 @@ mongoose.connection.on('error', (error: Error) => console.log(error))
 
 app.use('/', router())
 app.use('/email', mailerRoutes)
-
+app.use('/technik', technikRoutes)
 // app.use(express.json())
 // app.use('/uploads', express.static(path.resolve('uploads')))
 
